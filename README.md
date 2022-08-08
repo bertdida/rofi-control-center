@@ -1,6 +1,6 @@
 # Rofi Control Center Plugin (Fedora)
 
-Search Control Center/System Settings on Fedora distro using rofi.
+Search Control Center/System Settings on Fedora distro using [rofi](https://github.com/davatorium/rofi).
 
 ![rofi control center screenshot 1](https://raw.githubusercontent.com/bertdida/rofi-control-center/main/screenshots/01.png)
 
