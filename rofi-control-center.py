@@ -3,6 +3,8 @@
 import os
 import subprocess
 import sys
+import re
+import html
 from os.path import isfile, join
 from pathlib import Path
 
@@ -10,7 +12,7 @@ from pathlib import Path
 FILES_PATH = "/usr/share/applications"
 LINE_START_MATCHES = [
     "Name=",
-    # "Comment=",
+    "Comment=",
     "Exec=",
     "Icon=",
     "Keywords=",
@@ -31,7 +33,7 @@ def parse_file(file_path):
 
     for line in relevant_lines:
         key, value = line.split("=")
-        metadata[key] = value.strip()
+        metadata[key] = html.escape(value.strip())
 
     return metadata
 
@@ -51,19 +53,28 @@ for desktop_file in os.listdir(FILES_PATH):
 
 
 def display_entry(entry):
-    return "{} \0icon\x1f{}\x1fmeta\x1f{}".format(
-        entry["Name"], entry["Icon"], entry["Keywords"]
+    return "<span>{Name} <small>({Comment})</small></span>\0icon\x1f{Icon}\x1fmeta\x1f{Keywords}".format(
+        **entry
     )
 
 
-argument = sys.argv[1:]
-if argument:
-    selected = entries.get(argument[0].strip(), None)
-    if selected:
-        subprocess.Popen(
-            selected["Exec"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
-        )
+def get_selected(regex=r"^<span>(?P<name>.*)<small>"):
+    arguments = sys.argv[1:]
+    if not arguments:
+        return None
+
+    match = re.match(regex, arguments[0])
+    name = match.group("name") if match else None
+    return entries[name.strip()] if name else None
+
+
+selected = get_selected()
+if selected:
+    subprocess.Popen(
+        selected["Exec"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+    )
 
     sys.exit(0)
 else:
+    print("\0markup-rows\x1ftrue\n")
     print("\n".join([display_entry(entry) for entry in entries.values()]))
