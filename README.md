@@ -2,6 +2,12 @@
 
 Search Control Center/System Settings on Fedora distro using rofi.
 
+![rofi control center screenshot 1](https://raw.githubusercontent.com/bertdida/rofi-control-center/main/screenshots/01.png)
+
+![rofi control center screenshot 2](https://raw.githubusercontent.com/bertdida/rofi-control-center/main/screenshots/02.png)
+
+![rofi control center screenshot 3](https://raw.githubusercontent.com/bertdida/rofi-control-center/main/screenshots/03.png)
+
 ## Installation
 
 1. Download the script
