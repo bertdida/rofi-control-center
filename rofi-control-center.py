@@ -19,6 +19,23 @@ LINE_START_MATCHES = [
 ]
 
 
+def get_entries():
+    entries = {}
+    for desktop_file in os.listdir(FILES_PATH):
+        file_path = join(FILES_PATH, desktop_file)
+        if not isfile(file_path):
+            continue
+
+        base_name = Path(desktop_file).resolve().stem
+        if not base_name.startswith("gnome-") or not base_name.endswith("-panel"):
+            continue
+
+        entry = parse_file(file_path)
+        entries[entry["Name"]] = entry
+
+    return entries
+
+
 def parse_file(file_path):
     relevant_lines = []
     with open(file_path) as file_obj:
@@ -38,27 +55,7 @@ def parse_file(file_path):
     return metadata
 
 
-entries = {}
-for desktop_file in os.listdir(FILES_PATH):
-    file_path = join(FILES_PATH, desktop_file)
-    if not isfile(file_path):
-        continue
-
-    base_name = Path(desktop_file).resolve().stem
-    if not base_name.startswith("gnome-") or not base_name.endswith("-panel"):
-        continue
-
-    entry = parse_file(file_path)
-    entries[entry["Name"]] = entry
-
-
-def display_entry(entry):
-    return "<span>{Name} <small>({Comment})</small></span>\0icon\x1f{Icon}\x1fmeta\x1f{Keywords}".format(
-        **entry
-    )
-
-
-def get_selected(regex=r"^<span>(?P<name>.*)<small>"):
+def get_selected_entry_from_args(entries, regex=r"^<span>(?P<name>.*)<small>"):
     arguments = sys.argv[1:]
     if not arguments:
         return None
@@ -68,7 +65,14 @@ def get_selected(regex=r"^<span>(?P<name>.*)<small>"):
     return entries[name.strip()] if name else None
 
 
-selected = get_selected()
+def display_entry(entry):
+    return "<span>{Name} <small>({Comment})</small></span>\0icon\x1f{Icon}\x1fmeta\x1f{Keywords}".format(
+        **entry
+    )
+
+
+entries = get_entries()
+selected = get_selected_entry_from_args(entries)
 if selected:
     subprocess.Popen(
         selected["Exec"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE
