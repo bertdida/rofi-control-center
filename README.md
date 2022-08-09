@@ -1,6 +1,6 @@
-# Rofi Control Center Plugin (Fedora)
+# Rofi Control Center Plugin
 
-Search Control Center/System Settings on Fedora distro using [rofi](https://github.com/davatorium/rofi).
+Search Control Center/System Settings on GNOME based distro using [rofi](https://github.com/davatorium/rofi).
 
 ![rofi control center screenshot 1](https://raw.githubusercontent.com/bertdida/rofi-control-center/main/screenshots/01.png)
 
@@ -16,14 +16,17 @@ Search Control Center/System Settings on Fedora distro using [rofi](https://gith
 sudo wget https://raw.githubusercontent.com/bertdida/rofi-control-center/main/rofi-control-center.py -P ~/.local/bin/
 ```
 
-2. ...then make it executable.
+2. ...make it executable.
 
 ```bash
-chmod +x ~/.local/bin/rofi-control-center.py
+sudo chmod +x ~/.local/bin/rofi-control-center.py
 ```
 
-2. Update rofi's modi config to load the script.
-
+3. Launch using rofi command
+```bash
+rofi -modi "settings:~/.local/bin/rofi-control-center.py" -show settings -show-icons
+```
+or edit your rofi config to load the script automatically.
 ```css
 configuration {
   modi: "drun,settings:~/.local/bin/rofi-control-center.py";
